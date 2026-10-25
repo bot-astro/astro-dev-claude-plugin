@@ -1,6 +1,7 @@
 # AstroDevToolkit
 
-Private Claude Code plugin shared by the Astro repos (`astro`, `astro-bot.space`, `infra`). It is not published to any marketplace: each repo's `.claude/settings.json` registers this folder as a local `astro-dev` marketplace and enables the plugin.
+Private Claude Code plugin shared by the Astro repos (`astro`, `astro-bot.space`, `infra`).  
+It is not published to any marketplace: each repo's `.claude/settings.json` registers this folder as a local `astro-dev` marketplace and enables the plugin.
 
 ## Layout
 
