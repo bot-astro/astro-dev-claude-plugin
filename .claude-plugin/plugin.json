@@ -1,0 +1,6 @@
+{
+  "name": "AstroDevToolkit",
+  "description": "Skills for developing Astro: project context plus vendor skills (Crowdin, Infisical, Chargebee).",
+  "version": "1.0.0",
+  "author": { "name": "Giuliopime" }
+}

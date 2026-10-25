@@ -1,0 +1,11 @@
+{
+  "name": "astro-dev",
+  "owner": { "name": "Giuliopime" },
+  "plugins": [
+    {
+      "name": "AstroDevToolkit",
+      "source": "./",
+      "description": "Skills for developing Astro: project context plus vendor skills (Crowdin, Infisical, Chargebee)."
+    }
+  ]
+}
