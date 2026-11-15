@@ -20,6 +20,8 @@ For what each service does in the architecture, see `astro-tech-overview`.
 | Terraform | Cluster (in `gport`) and Astro cloud resources (in `infra`) | `terraform` CLI |
 | Sealed secrets | Encrypted bootstrap secrets in git | `kubeseal` |
 
+Terraform state of the `infra` modules lives in a Cloudflare R2 bucket, so every `terraform` command needs that bucket's S3 credentials. They are stored in Infisical and the wrapper script in `infra` loads them for you: use it instead of exporting variables by hand. The Cloudflare media tokens in Infisical are scoped to the media buckets and cannot read the state. The backend config and `*.tfvars` are gitignored, so they are missing in git worktrees: copy them in or run from the main checkout.
+
 JVM internals of a running bot pod: attach a JDK ephemeral container with `kubectl debug` (avoid the first shard) and use `jcmd`. See `docs/infrastructure.md`.
 
 ## Observability
