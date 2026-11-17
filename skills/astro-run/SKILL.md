@@ -5,7 +5,7 @@ description: Runs the whole Astro stack locally in one tmux session - Docker inf
 
 # /astro-run: run Astro locally
 
-Starts everything in a detached tmux session named `astro`, one window per process, so the user can attach and watch any of them.
+Starts everything in a detached tmux session named `astro`, one window per process, so the user can attach and watch any of them. A window must survive Ctrl-C: the user stops and restarts single services by hand, so a stopped service has to leave an open shell in its window, never close it.
 
 ## Where things live
 
@@ -18,14 +18,14 @@ Starts everything in a detached tmux session named `astro`, one window per proce
 1. Check `tmux`, `just`, `infisical`, `pnpm` and Docker are available, and that Infisical is logged in. If not, tell the user what is missing and stop.
 2. If a tmux session named `astro` already exists, don't create a second one: report it and ask whether to attach to it or kill and recreate it.
 3. Start the infrastructure with `just docker-up` from the backend repo and wait until it returns.
-4. Create the session detached, first window `bot` running `just run-bot`, with the backend repo as the working directory.
-5. Add one window per remaining backend service from the same directory: `api-central`, `support-bot`, `entitlements-expiration-job` (`just run-<service>`).
-6. Add a `web` window with the `astro-bot.space` repo as working directory, running `pnpm dev:mock`.
+4. Create the session detached with `tmux new-session -d -s astro -n bot -c <backend repo>`, giving no command so the window starts the user's shell.
+5. Add the other windows the same way with `tmux new-window -t astro -n <name> -c <dir>`: `api-central`, `support-bot`, `entitlements-expiration-job` in the backend repo, and `web` in the `astro-bot.space` repo.
+6. Type the command into each window with `tmux send-keys -t astro:<window> '<command>' Enter`: `just run-<service>` for the backend ones, `pnpm dev:mock` for `web`. Never pass the command to `new-session` or `new-window`: tmux closes the window when its command exits, so Ctrl-C (or a crash) would destroy the window and its output.
 7. Don't wait for the processes to be ready (Gradle startup is slow). Report the window names and tell the user to run `tmux attach -t astro`.
 
 ## Notes
 
 - Never build or compile the project to check it (backend `CLAUDE.md` rule): only start it with the recipes above.
-- A window whose process crashes closes with it; check with `tmux list-windows -t astro` and read logs through `tmux capture-pane -p -t astro:<window>`.
+- A crashed or Ctrl-C'd service leaves its shell open at the prompt, so the output stays readable and the user can rerun the command with the up arrow. The `entitlements-expiration-job` is a one-shot job and is expected to exit. Check windows with `tmux list-windows -t astro` and read logs through `tmux capture-pane -p -S -200 -t astro:<window>`; to restart a service, send its command again with `send-keys`.
 - To stop everything: `tmux kill-session -t astro`, then `just docker-down` only if the user asks to stop the infrastructure too.
 - Run services individually (not the whole stack) with the `run-*` recipes in the backend `justfile`.
